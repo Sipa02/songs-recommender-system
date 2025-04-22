@@ -161,11 +161,13 @@ Pendekatan ini digunakan untuk menilai apakah lagu-lagu yang direkomendasikan me
 
 **Contoh hasil evaluasi yang dilakukan**:
 
-<gambar>
+Misalkan kita ingin mencari lagu yang mirip dengan lagu Closer
+![Screenshot 2025-04-22 140617](https://github.com/user-attachments/assets/692ba90d-11e3-4acb-9b47-70ca4aa66f0b)
 
 Sistem akan menampilkan top 10 rekomendasi lagu dengan cosine similarity yang tinggi.
 
-<gambar>
+![Screenshot 2025-04-22 140627](https://github.com/user-attachments/assets/ca96df97-6b15-45d8-841e-e459dbd367a8)
+
 
 
 
