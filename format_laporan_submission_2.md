@@ -27,29 +27,17 @@ Salah satu solusi untuk meningkatkan kepuasan pengguna adalah dengan membangun s
 
 ### Problem Statements
 
-- Bagaimana membangun sistem rekomendasi lagu yang dapat menyarankan lagu-lagu yang relevan dengan preferensi atau suasana hati pengguna berdasarkan karakteristik musik dan judul lagu?
+- Bagaimana meningkatkan pengalaman pengguna dalam menemukan lagu yang relevan dengan preferensi mereka, sehingga meningkatkan kepuasan dan retensi pengguna?
 
-- Bagaimana memanfaatkan metode Content-based Filtering menggunakan algoritma TF-IDF untuk mengukur kesamaan antar judul lagu, serta menggunakan Cosine Similarity untuk mengukur kemiripan antar lagu berdasarkan fitur musik dan judul lagu?
 
 
 ### Goals
 
-- Membangun sistem rekomendasi lagu yang mampu memberikan saran lagu berdasarkan kemiripan karakteristik musik (seperti tempo, energy, danceability) dan kemiripan judul lagu menggunakan pendekatan Content-based Filtering.
-
-- Mengimplementasikan metode Content-based Filtering untuk mencocokkan lagu berdasarkan konten musik dan teks (judul lagu), sehingga pengguna dapat menemukan lagu yang sesuai dengan preferensi atau suasana hati mereka.
-
-- Menerapkan algoritma TF-IDF untuk mengekstraksi bobot kata dari judul lagu, serta menghitung kesamaan antar lagu dengan menggunakan Cosine Similarity yang mempertimbangkan baik fitur numerik musik maupun teks dari judul lagu.
-
+- Membangun sistem rekomendasi berbasis konten (content-based filtering) yang dapat memberikan rekomendasi lagu sesuai dengan kesamaan fitur konten musik, sehingga pengguna mendapatkan rekomendasi yang relevan dengan preferensinya.
 
 
 ### Solution statements
-Untuk mencapai tujuan tersebut, solusi yang diusulkan dalam proyek ini meliputi:
-
-- Menggunakan TF-IDF untuk representasi fitur teks dari judul lagu. Judul lagu akan diubah menjadi vektor fitur menggunakan TF-IDF, sehingga setiap lagu dapat direpresentasikan sebagai dokumen numerik berdasarkan bobot pentingnya kata-kata dalam judul.
-
-- Menggunakan Cosine Similarity untuk mengukur kesamaan antar lagu. Dengan menggabungkan fitur numerik musik dan representasi teks dari judul lagu, sistem dapat menghitung kemiripan antara lagu-lagu berdasarkan karakteristik audio dan semantik dari judul lagu.
-
-- Menggabungkan informasi dari fitur musik (seperti tempo, danceability, dan valence) dan fitur teks (judul lagu) untuk memberikan rekomendasi lagu yang lebih relevan berdasarkan kesamaan konten secara keseluruhan.
+Menerapan sistem rekomendasi berbasis Content-Based Filtering menggunakan TF-IDF untuk memproses fitur deskriptif lagu, lalu mengukur kemiripan lagu dengan Cosine Similarity. 
 
 
 ## Data Understanding
@@ -104,9 +92,6 @@ Dataset yang digunakan adalah [30000 Spotify Songs](https://www.kaggle.com/datas
 - duration_ms : Durasi lagu dalam satuan milidetik.
 
 
-**Rubrik/Kriteria Tambahan (Opsional)**:
-- Melakukan beberapa tahapan yang diperlukan untuk memahami data, contohnya teknik visualisasi data atau exploratory data analysis.
-
 ## Data Preparation
 Tahapan data preparation dilakukan untuk memastikan bahwa data siap digunakan oleh model machine learning dan menghasilkan performa yang optimal. Beberapa langkah yang dilakukan pada tahap ini meliputi:
 
@@ -118,7 +103,8 @@ Tahapan data preparation dilakukan untuk memastikan bahwa data siap digunakan ol
     Duplikasi dihapus berdasarkan track_id yang bersifat unik, untuk menghindari hasil rekomendasi yang redundan. Duplikat pada kolom lain seperti track_name atau track_album_name tidak dihapus karena dapat menyebabkan hilangnya data penting dan mengganggu performa model.
 
 3. **Memilih fitur**
-    Fitur utama yang digunakan adalah track_name, karena pendekatan yang digunakan berbasis konten (content-based filtering) dengan memanfaatkan kemiripan antar judul lagu. Selain itu, fitur numerik seperti danceability, energy, valence, dan tempo juga dipertimbangkan untuk digabungkan sebagai fitur tambahan jika diperlukan.
+    Fitur utama yang digunakan adalah track_name, karena pendekatan yang digunakan berbasis konten (content-based filtering) dengan memanfaatkan kemiripan antar judul lagu. Fitur-fitur lain yang dipilih: danceability, energy, loudness, speechiness, acousticness, instrumentalness, liveness, valence, tempo, dan track_popularity.
+    
 
 4. **Normalisasi fitur numerik**
     Fitur-fitur numerik dinormalisasi menggunakan teknik Min-Max Scaling untuk memastikan semua fitur berada pada skala yang sama dan tidak mendominasi hasil akhir saat dilakukan penggabungan vektor.
@@ -152,24 +138,48 @@ Tahapan data preparation dilakukan untuk memastikan bahwa data siap digunakan ol
 
     - Tidak mempertimbangkan preferensi pengguna secara eksplisit karena hanya fokus pada karakteristik item.
 
+    **Hasil top 10 recomendation**
+    ![hasil](https://github.com/user-attachments/assets/eeef44c1-2fd3-444e-90f2-534d2ab3b59a)
 
-
+    
 ## Evaluation
-Evaluasi dilakukan secara manual dengan cara menginput satu judul lagu sebagai query, kemudian sistem akan menampilkan 10 lagu teratas yang memiliki skor kemiripan tertinggi berdasarkan hasil perhitungan Cosine Similarity terhadap vektor TF-IDF.
 
-Pendekatan ini digunakan untuk menilai apakah lagu-lagu yang direkomendasikan memang relevan dan memiliki kemiripan secara makna atau konteks dengan lagu input. Hasil evaluasi bersifat kualitatif, berdasarkan penilaian subjektif terhadap kesesuaian tema atau nuansa dari lagu-lagu yang direkomendasikan.
+- **Precision@K** : proporsi item yang relevan di antara K rekomendasi teratas. Hal ini berfokus pada kualitas rekomendasi.
 
-**Contoh hasil evaluasi yang dilakukan**:
-
-Misalkan kita ingin mencari lagu yang mirip dengan lagu Closer
-![Screenshot 2025-04-22 140617](https://github.com/user-attachments/assets/692ba90d-11e3-4acb-9b47-70ca4aa66f0b)
-
-Sistem akan menampilkan top 10 rekomendasi lagu dengan cosine similarity yang tinggi.
-
-![Screenshot 2025-04-22 140627](https://github.com/user-attachments/assets/ca96df97-6b15-45d8-841e-e459dbd367a8)
+![precision@k](https://github.com/user-attachments/assets/363f0f74-9611-4454-9bd5-7ef6cded4165)
 
 
+Bayangkan sebuah sistem rekomendasi musik merekomendasikan 10 lagu (K=10) kepada pengguna. Dari 10 lagu ini, pengguna menemukan 5 lagu yang relevan.
+
+maka precision@10 = 5/10 = 0.5. Artinya 50% dari 10 lagu teratas yang direkomendasikan relevan bagi pengguna.
+
+- **Recall@K**: mengukur kemampuan sistem rekomendasi untuk mengidentifikasi semua item yang relevan dalam rekomendasi K teratas. Hal ini berfokus pada kelengkapan sistem.
+
+![recall@k](https://github.com/user-attachments/assets/28b91479-8b02-4e08-aee1-afc4fbe113e3)
 
 
-**---Ini adalah bagian akhir laporan---**
+Melanjutkan contoh sebelumnya, anggaplah ada total 7 yang relevan untuk pengguna. Dari jumlah tersebut, 5 di antaranya termasuk dalam 10 rekomendasi teratas.
+
+maka recall@10 = 5/7 = 0.714. Artinya, 71,4% dari semua lagu yang relevan masuk dalam 10 rekomendasi teratas.
+
+- **F-Score@K**: rata-rata harmonik dari presisi dan recall pada K. Ini memberikan metrik yang seimbang yang mempertimbangkan presisi dan recall.
+
+![f-score@k](https://github.com/user-attachments/assets/3ca08130-661d-4761-a454-7e9b44c216f3)
+
+
+
+F-score@10 = 2(0.5 x 0.714 / 0.5 + 0.714) = 2(0.357/1.214) = 0.588
+
+F-Score@5 sekitar 0.588 ini mencerminkan keseimbangan antara presisi dan recall, memberikan metrik tunggal untuk mengevaluasi kinerja sistem rekomendasi.
+
+
+<br />
+
+## Kesimpulan
+
+Seluruh proses analisis dan pemodelan yang telah dilakukan berhasil menjawab solution statement yang dirumuskan di awal, yaitu membangun sistem rekomendasi lagu berbasis content-based filtering untuk membantu pengguna menemukan lagu-lagu yang relevan dengan preferensi atau suasana hati mereka.
+
+Tahapan eksplorasi dan pembersihan data memastikan bahwa data yang digunakan dalam sistem memiliki kualitas yang baik dan representatif. Implementasi metode TF-IDF berhasil mengubah judul lagu menjadi representasi numerik, sementara algoritma cosine similarity digunakan untuk mengukur kemiripan antar lagu. Hasil akhir sistem mampu menghasilkan rekomendasi 10 lagu teratas yang relevan dengan lagu input, baik secara semantik maupun emosi yang ditangkap dari judul.
+
+Dengan demikian, sistem ini diharapkan dapat menjadi solusi awal yang efektif untuk membantu pengguna dalam menjelajahi koleksi lagu yang luas dan menemukan lagu-lagu yang sesuai dengan preferensi mereka, serta memberikan dasar bagi pengembangan sistem rekomendasi musik yang lebih kompleks di masa mendatang, seperti dengan menambahkan fitur lirik, genre, atau riwayat pemutaran pengguna.
 
